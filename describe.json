@@ -1,0 +1,48 @@
+{
+  "tools": [
+    {
+      "name": "exa_search",
+      "description": "用 Exa 搜索网页，返回每条结果的标题、网址和摘要，供 bot 在回答里引用。",
+      "parameters": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "query": {
+            "type": "string",
+            "description": "The search query."
+          },
+          "max_results": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10,
+            "default": 5,
+            "description": "Maximum number of results to return."
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "tags": [
+        "read"
+      ],
+      "summary": {
+        "zh": "用 Exa 搜索网页，返回标题、网址和摘要。",
+        "en": "Searches the web with Exa, returning titles, URLs and snippets."
+      }
+    }
+  ],
+  "events": [
+    {
+      "type": "exa.started",
+      "description": {
+        "zh": "世界已挂载。",
+        "en": "The world was mounted."
+      }
+    }
+  ],
+  "summary": {
+    "zh": "Exa 网页搜索世界，提供 exa_search 工具。",
+    "en": "Exa web-search world, providing the exa_search tool."
+  }
+}
