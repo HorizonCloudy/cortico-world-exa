@@ -43,11 +43,17 @@ export class ExaWorld implements World {
   readonly id = 'exa';
   private host: WorldHost | null = null;
 
-  constructor(private readonly opts: { cfg: ExaConfigSection; timezone: string; getApiKey: () => string | undefined }) {}
+  constructor(private readonly opts: { cfg: ExaConfigSection; timezone: string; getApiKey: () => string | undefined; botDir?: string }) {}
+
+  private keyHint(): string {
+    const file = this.opts.botDir ? `${this.opts.botDir.replace(/[\\/]+$/, '')}/.env` : '部署目录的 .env 文件';
+    return `请把 EXA_API_KEY=你的密钥 这一行加入 ${file}（一行一个，值不能含空格）。保存后下一次调用即生效，无需重启。`;
+  }
 
   /** 环境提示词里暴露的变量。 */
   async envPromptVars(): Promise<Record<string, string>> {
-    return { 'exa.endpoint': this.opts.cfg.endpoint ?? '(default)' };
+    const envFile = this.opts.botDir ? `${this.opts.botDir.replace(/[\\/]+$/, '')}/.env` : '(未取到部署目录)';
+    return { 'exa.endpoint': this.opts.cfg.endpoint ?? '(default)', 'exa.envFile': envFile };
   }
 
   /** 把搜索工具的 handler 绑定到这个世界实例。 */
@@ -65,7 +71,10 @@ export class ExaWorld implements World {
         description: 'Exa 搜索所用的端点与最大结果条数。',
         path: ENV_PROMPT_FILE,
         role: 'envPrompt',
-        vars: [{ name: 'exa.endpoint', description: 'Exa 搜索接口的地址，空时使用内置默认值。' }],
+        vars: [
+          { name: 'exa.endpoint', description: 'Exa 搜索接口的地址，空时使用内置默认值。' },
+          { name: 'exa.envFile', description: '密钥文件 .env 的准确路径，用于回答用户「密钥填哪里」。' },
+        ],
       }],
     };
   }
@@ -97,7 +106,7 @@ export class ExaWorld implements World {
 
     const key = this.opts.getApiKey();
     if (!key) {
-      throw new Error('缺少 Exa 密钥：请在宿主设置里配置 EXA_API_KEY，再重试。');
+      throw new Error(`缺少 Exa 密钥。${this.keyHint()}`);
     }
 
     const res = await fetch(this.opts.cfg.endpoint ?? ENDPOINT_DEFAULT, {

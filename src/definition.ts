@@ -30,6 +30,7 @@ export function exaDefinition(): WorldDefinition<ExaConfigSection> {
       cfg: ctx.cfg,
       timezone: ctx.timezone,
       getApiKey: () => ctx.secret('EXA_API_KEY'),
+      botDir: ctx.botDir,
     }),
     describe: DESCRIBE,
   };

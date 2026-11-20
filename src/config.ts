@@ -1,5 +1,6 @@
 /** Exa 世界的配置节 `worlds.exa`、默认值与控制台配置项。 */
-import type { ConfigGroup, WorldSection } from 'cortico/core/types.ts';
+import type { ConfigGroup } from 'cortico/core/types.ts';
+import type { WorldSection } from 'cortico/world.ts';
 
 export const EXA_ID = 'exa';
 
